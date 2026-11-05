@@ -1,26 +1,192 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Design tokens. Re-theme a client by changing these values only.
+ * navy  – brand color, dark surfaces, headings
+ * gold  – the one call-to-action / highlight color
+ * cloud – off-white section background
+ * slate – secondary text
+ */
+@theme {
+  --color-navy-950: #061630;
+  --color-navy-900: #0a1f44;
+  --color-navy: #0f2c5c;
+  --color-navy-700: #1a3f7a;
+  --color-gold: #f7c234;
+  --color-gold-deep: #e8ad12;
+  --color-cloud: #f4f7fb;
+  --color-sky: #e6eef8;
+  --color-line: #dbe3ee;
+  --color-slate: #5a6880;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --radius-card: 1.25rem;
+  --radius-panel: 2rem;
+
+  --shadow-card: 0 1px 2px rgb(10 31 68 / 0.06), 0 8px 24px -12px rgb(10 31 68 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(10 31 68 / 0.06), 0 22px 40px -18px rgb(10 31 68 / 0.35);
+
+  --animate-rise: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background: #fff;
+    color: var(--color-navy-900);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: inherit;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-gold-deep);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) {
+    .container-page {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3.25rem;
+    padding: 0.875rem 1.625rem;
+    border-radius: 999px;
+    font-weight: 700;
+    line-height: 1.1;
+    white-space: nowrap;
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease,
+      transform 200ms ease,
+      box-shadow 200ms ease;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn-gold {
+    background: var(--color-gold);
+    color: var(--color-navy-950);
+    box-shadow: 0 10px 24px -12px rgb(232 173 18 / 0.9);
+  }
+  .btn-gold:hover {
+    background: var(--color-gold-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px -12px rgb(232 173 18 / 0.9);
+  }
+  .btn-navy {
+    background: var(--color-navy);
+    color: #fff;
+  }
+  .btn-navy:hover {
+    background: var(--color-navy-700);
+    transform: translateY(-2px);
+  }
+  .btn-ghost-light {
+    border: 1.5px solid rgb(255 255 255 / 0.45);
+    color: #fff;
+    background: rgb(255 255 255 / 0.06);
+  }
+  .btn-ghost-light:hover {
+    border-color: #fff;
+    background: rgb(255 255 255 / 0.14);
+  }
+  .btn-ghost-dark {
+    border: 1.5px solid var(--color-line);
+    color: var(--color-navy-900);
+    background: #fff;
+  }
+  .btn-ghost-dark:hover {
+    border-color: var(--color-navy);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-navy-700);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 1.75rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-gold);
+  }
+}
+
+/* Section entrance: CSS scroll-driven, no JavaScript. Browsers without
+   support (or users who prefer reduced motion) simply see the content. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 22%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
 }
